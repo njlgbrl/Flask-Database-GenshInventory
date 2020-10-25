@@ -1,0 +1,133 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    GenshInventory Liyue
+{% endblock title %}
+
+{% block content %}
+    <div class="jumbotron p-3">
+        <div class="well text-center">
+            <h4 class="display-4">Liyue Merchants</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-md-12">
+                <div class="jumbotron p-3">
+                    <h2>Manage <b>Liyue Merchants</b>
+                        <button type="button" class="btn btn-outline-success float-right" data-toggle="modal" data-target="#modaladd">ADD MERCHANT</button>
+                    </h2>
+                    <div class="container-fluid text-center">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            <span class="sr-only">Close</span>
+                                        </button>
+                                        <strong>{{message}}</strong>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <!--TABLE-->
+                    <table class="table table-hover">
+                        <tr style="text-align:center; background-color:darkgray">
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Action</th>
+                        </tr>
+
+                        {% for row in merchants %}
+                        <tr style="text-align: center; background-color:rgb(43, 43, 43); color:white">
+                            <th>{{row.name}}</th>
+                            <th>{{row.type}}</th>
+                            <th>{{row.location}}</th>
+                            <th>
+                                <a href="/merchants/liyue/{{row.name}}/wares" class="btn btn-primary" role="button">CHECK WARES</a>
+                                <a href="/merchants/liyue/update/{{row.id}}" class="btn btn-warning" data-toggle="modal" data-target="#modaledit{{row.id}}">EDIT</a>
+                                <a href="/merchants/liyue/delete/{{row.id}}" class="btn btn-danger" onclick="return confirm('Confirm Delete')">DELETE</a>
+                            </th>
+                        </tr>
+
+                        <!--MODAL EDIT-->
+                        <div id="modaledit{{row.id}}" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Update Merchant</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{url_for('merchant.liyueUpdate')}}" method="POST">
+                                            <div class="form-group">
+                                                <label><b>Name</b></label>
+                                                <input type="hidden" name="id" value="{{row.id}}">
+                                                <input type="text" class="form-control" name="name" required="1" value="{{row.name}}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label><b>Type</b></label>
+                                                <input type="hidden" name="location" value="Liyue">
+                                                <input type="text" class="form-control" name="type" required="1" value="{{row.type}}">
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary" type="submit">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% endfor %}
+
+                    </table>
+                </div>
+
+                <!--MODAL ADD-->
+                <div id="modaladd" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add Merchant</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{url_for('merchant.liyueInsert')}}" method="POST">
+                                    <div class="form-group">
+                                        <label><b>Name</b></label>
+                                        <input type="text" class="form-control" name="name" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Type</b></label>
+                                        <input type="text" class="form-control" name="type" required="1">
+                                        <input type="hidden" name="location" value="Liyue">
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="submit">Add</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}

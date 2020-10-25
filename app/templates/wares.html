@@ -1,0 +1,149 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    GenshInventory
+{% endblock title %}
+
+{% block content %}
+    <div class="jumbotron p-3">
+        <div class="well text-center">
+            <h4 class="display-4">{{merchant.name}}'s Wares</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-md-12">
+                <div class="jumbotron p-3">
+                    <h2>Manage <b>{{merchant.name}}'s Wares</b>
+                        <button type="button" class="btn btn-outline-success float-right" data-toggle="modal" data-target="#modaladd">ADD ITEM</button>
+                    </h2>
+                    <div class="container-fluid text-center">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            <span class="sr-only">Close</span>
+                                        </button>
+                                        <strong>{{message}}</strong>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <!--TABLE-->
+                    <table class="table table-hover">
+                        <tr style="text-align:center; background-color:darkgray">
+                            <th>Product ID</th>
+                            <th>Item Name</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+
+                        {% for row in wares %}
+                        <tr style="text-align: center; background-color:rgb(43, 43, 43); color:white">
+                            <th>{{row.productID}}</th>
+                            <th>{{row.itemName}}</th>
+                            <th>{{row.stock}}</th>
+                            <th>{{row.price}}</th>
+                            <th>
+                                <a href="/merchants/{{row.location[0]|lower}}{{row.location[1:]}}/{{row.name}}/wares/update/{{row.ID}}" class="btn btn-warning" data-toggle="modal" data-target="#modaledit{{row.ID}}">EDIT</a>
+                                <a href="/merchants/{{row.location[0]|lower}}{{row.location[1:]}}/{{row.name}}/wares/delete/{{row.ID}}" class="btn btn-danger" onclick="return confirm('Confirm Delete')">DELETE</a>
+                            </th>
+                        </tr>
+
+                        <!--MODAL EDIT-->
+                        <div id="modaledit{{row.ID}}" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Update Item</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                            <form action="{{url_for('merchant.wareUpdate')}}" method="POST">
+                                                <div class="form-group">
+                                                    <label><b>Stock</b></label>
+                                                    <input type="hidden" name="ID" value="{{row.ID}}">
+                                                    <input type="hidden" name="pID" value="{{row.productID}}">
+                                                    <input type="hidden" name="mID" value="{{row.id}}">
+                                                    <input type="hidden" name="merchantName" value="{{row.name}}">
+                                                    <input type="hidden" name="location" value="{{row.location}}">
+                                                    <input type="number" class="form-control" name="stock" required="1" value="{{row.stock}}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><b>Price</b></label>
+                                                    <input type="number" class="form-control" name="price" required="1" value="{{row.price}}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <button class="btn btn-primary" type="submit">Update</button>
+                                                </div>
+                                            </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </table>
+                </div>
+
+                <!--MODAL ADD-->
+                <div id="modaladd" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add Ware</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{url_for('merchant.wareInsert')}}" method="POST">
+                                    <div class="form-group">
+                                        <input type="hidden" name="merchantID" value="{{merchant.id}}">
+                                        <input type="hidden" name="location" value="{{merchant.location}}">
+                                        <input type="hidden" name="merchantName" value="{{merchant.name}}">
+                                        
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Item</b></label>
+                                        <select name="item" class="form-control">
+                                            {% for product in allProducts %}
+                                                <option value="{{product.id}}">{{product.itemName}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Stock</b></label>
+                                        <input type="text" class="form-control" name="stock" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Price</b></label>
+                                        <input type="text" class="form-control" name="price" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="submit">Add</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}

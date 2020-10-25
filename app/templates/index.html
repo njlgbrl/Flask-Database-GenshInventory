@@ -1,0 +1,165 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    GenshInventory
+{% endblock title %}
+
+{% block content %}
+    <div class="jumbotron p-3">
+        <div class="well text-center">
+            <h4 class="display-4">Item Pool</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-md-12">
+                <div class="jumbotron p-3">
+                    <h2>Manage <b>Item Pool</b>
+                        <button type="button" class="btn btn-outline-success float-right" data-toggle="modal" data-target="#modaladd">ADD ITEM</button>
+                    </h2>
+                    <div class="container-fluid text-center">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            <span class="sr-only">Close</span>
+                                        </button>
+                                        <strong>{{message}}</strong>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <!-- TABLE -->
+                    <table class="table table-hover">
+                        <tr style="text-align:center; background-color:darkgray">
+                            <th>ID</th>
+                            <th>Item Name</th>
+                            <th>Description</th>
+                            <th>Rarity</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+
+                        {% for row in products %}
+                        <tr style="text-align: center; background-color:rgb(43, 43, 43); color:white">    
+                            <th>{{row.id}}</th>
+                            <th>{{row.itemName}}</th>
+                            <th style="width:600px;">{{row.itemDesc}}</th>
+                            <th>{{row.rarity}}</th>
+                            <th>{{row.type}}</th>
+                            <th>
+                                <a href="/update/{{row.id}}" class="btn btn-warning" data-toggle="modal" data-target="#modaledit{{row.id}}">EDIT</a>
+                                <a href="/delete/{{row.id}}" class="btn btn-danger" onclick="return confirm('Confirm Delete')">DELETE</a>
+                            </th>
+                        </tr>
+
+                        <!-- MODAL EDIT-->
+                        <div id="modaledit{{row.id}}" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Update Item</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{url_for('update')}}" method="POST">
+                                            <div class="form-group">
+                                                <label><b>Name</b></label>
+                                                <input type="hidden" name="id" value="{{row.id}}">
+                                                <input type="text" class="form-control" name="itemName" required="1" value="{{row.itemName}}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label><b>Description</b></label>
+                                                <input type="text" class="form-control" name="itemDesc" required="1" value="{{row.itemDesc}}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label><b>Rarity (Star Grade)</b></label>
+                                                <select name="rarity" class="form-control">
+                                                    <option value="None">None</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label><b>Type</b></label>
+                                                <input type="text" class="form-control" name="type" required="1" value="{{row.type}}">
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary" type="submit">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% endfor %}
+
+                    </table>
+
+                </div>
+
+                <!-- MODAL ADD-->
+                <div id="modaladd" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add Item</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{url_for('insert')}}" method="POST">
+                                    <div class="form-group">
+                                        <label><b>Name</b></label>
+                                        <input type="text" class="form-control" name="itemName" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Description</b></label>
+                                        <input type="text" class="form-control" name="itemDesc" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Rarity (Star Grade)</b></label>
+                                        <select name="rarity" class="form-control">
+                                            <option value="None">None</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Type</b></label>
+                                        <input type="text" class="form-control" name="itemType" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="submit">Add</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}
