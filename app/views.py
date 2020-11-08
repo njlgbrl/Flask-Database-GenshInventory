@@ -4,6 +4,10 @@ from .models import products
 from app import app, dbase
 from string import capwords
 
+@app.route('/')
+def home():
+    return redirect(url_for('users.login'))
+
 @app.route('/itemlist')
 @login_required
 def index():
