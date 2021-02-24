@@ -10,4 +10,7 @@ This is the first time I tackled unfamiliar packages in Python such as SQLite, F
   * Read
   * Update
   * Delete
-* Transferable database (for the sake of collaboration convenience)
+* Transferrable database (for the sake of collaboration convenience)
+
+
+### Repository Archived - University Performance Task has concluded
